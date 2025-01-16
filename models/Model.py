@@ -78,7 +78,8 @@ class Model:
                 self.stopwatch.start()  #Käivita stopper
                 self.lets_play()        #lähme mängima
             elif user_input == 2:
-                self.show_leaderboard()     #näita edetabelit
+                #self.show_leaderboard()     #näita edetabelit
+                self.show_no_cheater()                      #######
                 self.show_menu()        #Näita menüüd
             elif user_input == 3:
                 print('Bye')        #Väljasta tekst
@@ -92,5 +93,37 @@ class Model:
         db = Database()
         data = db.read_records()
         if data:
+            print("Ausate mängijate edetabel:")
             for record in data:
-                print(record)   # name -> record[1]
+                print(record)
+        else:
+            print("Edetabel on tühi või ilmnes tõrge.")
+
+
+    def show_no_cheater(self):
+        """Edetabel ausatele mängijatele"""
+        db = Database()
+        data = db.no_cheater()
+        if data:
+            # Vormindus funktsioon veerule
+            formatters = {
+                'Mängu aeg': self.format_time
+            }
+            print() #Tühirida enne edetabelit
+            # self.print_table(data, formatters)
+            self.manual_table(data)
+            print()
+
+    @staticmethod
+    def format_time(seconds):
+        hours = seconds // 3600
+        minutes = (seconds % 3600) // 60
+        seconds = seconds % 60
+        return "%02d:%02d:%02d" % (hours, minutes, seconds)
+
+    def print_table(data, formatters=None):...
+
+    def manual_table(self, data):
+        print('Nimi              Number   Sammud   Mängu aeg')
+        for row in data:
+            print(f'{row[0][:15]:<16} {row[1]:>7} {row[2]:>8} {self.format_time(row[3]):>11}')

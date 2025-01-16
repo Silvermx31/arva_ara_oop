@@ -38,7 +38,7 @@ class Database:
         """Loeb andmebaasist kogu edetabeli"""
         if self.cursor:
             try:
-                sql = f'SELECT * FROM {self.table};'
+                sql = f'SELECT * FROM {self.table};'        # TAGASTAB AINULT AUSAD MÄNGIJAD, nimi äraarvatav nr, sammude arv ja aeg
                 self.cursor.execute(sql)
                 data = self.cursor.fetchall()   # kõik kirjed muutujasse data
                 return data
@@ -63,4 +63,23 @@ class Database:
                 self.close_connection()
         else:
             print('Ühendus puudub! Palun loo ühendus andmebaasiga')
+
+    def no_cheater(self):
+        """Loeb andmebaasist kogu edetabeli"""
+        if self.cursor:
+            try:
+                sql = f'SELECT name, quess, steps, game_length FROM {self.table} WHERE cheater = ?;'        # TAGASTAB AINULT AUSAD MÄNGIJAD, nimi äraarvatav nr, sammude arv ja aeg
+                self.cursor.execute(sql, (0,))
+                data = self.cursor.fetchall()   # kõik kirjed muutujasse data
+                return data
+            except sqlite3.Error as error:
+                print(f'Kirjete lugemisel ilmnes tõrge: {error}')
+                return []   #Tagastab tühja listi
+            finally:
+                self.close_connection()
+        else:
+            print('Ühenduse andmebaasiga puudub. Loo ühendus andmebaasiga')
+
+
+
 
