@@ -1,5 +1,6 @@
 from random import randint
 
+from models.Database import Database
 from models.Stopwatch import Stopwatch
 
 
@@ -20,7 +21,7 @@ class Model:
         self.game_over = False  # mäng läbi
         self.cheater = False  # mängija ei cheadi
         self.stopwatch.reset()  #nullib stopperi
-        self.stopwatch.start()  #käivitab stopperi
+        #self.stopwatch.start()  #käivitab stopperi
 
     def ask(self):
         """küsib nr ja kontrollib"""
@@ -47,3 +48,49 @@ class Model:
             self.ask()
         # Näita mängu aega
         print(f'Mäng kestis {self.stopwatch.format_time()}')
+        self.what_next()    # mis on järgmiseks
+        self.show_menu()
+
+    def what_next(self):
+        """Küsime mängija nime ja lisame info andmebaasi"""
+        name = self.ask_name()
+        db = Database()     # Loo andmebaasi objekt
+        db.add_record(name, self.steps, self.pc_nr, self.cheater, self.stopwatch.seconds)
+
+
+    @staticmethod
+    def ask_name():
+        """Küsib nime ja tagastab korrektse nime"""
+        name = input('Kuidas on mängija nimi? ')
+        if not name.strip():
+            name = 'Teadmata'
+        return name.strip()
+
+    def show_menu(self):
+        """Näita mängu menüüd"""
+        print('1 - Mängima')
+        print('2  Edetabel')
+        print('3 - Välju programmist')
+        user_input = int(input('Sisesta nr [1, 2 või 3]: '))
+        if 1 <= user_input <= 3:
+            if user_input == 1:
+                self.reset_game()       #Algseadista mäng
+                self.stopwatch.start()  #Käivita stopper
+                self.lets_play()        #lähme mängima
+            elif user_input == 2:
+                self.show_leaderboard()     #näita edetabelit
+                self.show_menu()        #Näita menüüd
+            elif user_input == 3:
+                print('Bye')        #Väljasta tekst
+                exit()      #Skripti töö lõppeb
+        else:
+            self.show_menu()
+
+    @staticmethod
+    def show_leaderboard():
+        """Näita edetabelit"""
+        db = Database()
+        data = db.read_records()
+        if data:
+            for record in data:
+                print(record)   # name -> record[1]
