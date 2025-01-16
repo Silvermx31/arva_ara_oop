@@ -18,8 +18,8 @@ class Stopwatch:
     def _run(self):
         """ Aeg jookseb threadis"""
         while self.running:
-            time.sleep(1)   # oota 1 sekund
             self.seconds += 1   # suurenda sekundit ühe võrra
+            time.sleep(1)   # oota 1 sekund
 
     def stop(self):
         """Peata stopper"""
@@ -33,6 +33,6 @@ class Stopwatch:
         hours = self.seconds // 3600
         minutes = (self.seconds % 3600) // 60
         seconds = self.seconds % 60
-        #return "%02d:%02d:%02d" % (hours, minutes, seconds)
-        return f'{hours:02}:{minutes:02}:{seconds:02}'
+        return "%02d:%02d:%02d" % (hours, minutes, seconds)
+        #return f'{hours:02}:{minutes:02}:{seconds:02}'
 
