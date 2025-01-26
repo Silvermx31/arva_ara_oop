@@ -1,7 +1,8 @@
 from random import randint
-
+from datetime import datetime
 from models.Database import Database
 from models.Stopwatch import Stopwatch
+from models.ExportToFile import ExportToFile
 
 
 class Model:
@@ -99,20 +100,23 @@ class Model:
         else:
             print("Edetabel on tühi või ilmnes tõrge.")
 
-
     def show_no_cheater(self):
-        """Edetabel ausatele mängijatele"""
+        """Näitab ausate mängijate edetabelit ja ekspordib selle faili"""
         db = Database()
         data = db.no_cheater()
         if data:
-            # Vormindus funktsioon veerule
-            formatters = {
-                'Mängu aeg': self.format_time
-            }
-            print() #Tühirida enne edetabelit
-            # self.print_table(data, formatters)
-            self.manual_table(data)
+            # Ekspordi andmed faili
+            etf = ExportToFile(self)
+            etf.export()
+
+            # Kuva edetabel
             print()
+            print('Nimi              Number   Sammud   Mängu aeg')
+            for row in data:
+                print(f'{row[0][:15]:<16} {row[1]:>7} {row[2]:>8} {self.format_time(row[3]):>11}')
+            print()
+        else:
+            print("Edetabel on tühi.")
 
     @staticmethod
     def format_time(seconds):

@@ -89,27 +89,3 @@ class Database:
                 self.close_connection()
         else:
             print('Ühendus andmebaasiga puudub. ')
-
-# Export
-class ExportToFile:
-    def __init__(self, model):
-        self.model = model
-        db = Database()
-        self.data = db.for_export()
-
-    def export(self):
-        """Eksportib tabeli sisu faili"""
-        if not self.data:
-            print("Andmeid ei leitud.")
-            return
-
-        file_name = Database.db_name.replace('.db', '.txt')
-        try:
-            with open(file_name, 'w', encoding='utf-8') as file:
-                file.write("name;quess;steps;game_length;game_time\n")
-                for row in self.data:
-                    formatted_time = self.model.format_time(row[3])
-                    file.write(f"{row[0]};{row[1]};{row[2]};{formatted_time};{row[4]}\n")
-            print(f"Andmed eksporditi faili: {file_name}")
-        except Exception as e:
-            print(f"Tekkis viga faili kirjutamisel: {e}")
